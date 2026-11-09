@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>트릭컬 리바이브 | 스트레스–기본 재화 보상 배율</title>
+<style>
+:root{color-scheme:light;--ink:#1f2b3d;--muted:#637187;--blue:#457bd5;--light:#f5f8fd;--line:#e1e8f3}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:26px;background:#f3f6fb;color:var(--ink);font-family:Pretendard,'Noto Sans KR',system-ui,-apple-system,sans-serif}
+main{width:min(720px,100%);border:1px solid var(--line);border-radius:22px;padding:32px;background:white;box-shadow:0 12px 40px #23365212}
+h1{margin:0 0 8px;font-size:23px;letter-spacing:-.05em}
+p{line-height:1.6;color:var(--muted)}
+.explain{margin:0 0 26px;font-size:14px}
+.panel{background:var(--light);border-radius:16px;padding:25px;margin-bottom:20px;text-align:center}
+.panel .eyebrow{color:var(--muted);font-size:14px;font-weight:600}
+.rate{font-size:67px;font-weight:800;line-height:1.2;color:#295fb7;font-variant-numeric:tabular-nums;letter-spacing:-.06em}
+.sub{font-size:14px;margin-top:10px;color:var(--muted)}
+.titles{display:flex;justify-content:space-between;align-items:center;font-size:14px;gap:10px;margin:0 0 10px;font-weight:700}
+#stressValue{font-size:20px;color:#295fb7;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;cursor:pointer;accent-color:var(--blue);height:28px}
+.ends{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.charttitle{font-size:14px;font-weight:700;margin:24px 0 2px}
+.chart{position:relative;margin:0 -2px}svg{width:100%;height:auto;display:block}
+.legend{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:12px}
+.dot{width:9px;height:9px;background:var(--blue);border-radius:50%}
+.formula{margin:20px 0 4px;padding:12px 14px;background:#fbfcff;border:1px solid var(--line);border-radius:10px;color:#44536c;font-size:13px}
+footer{color:var(--muted);font-size:12px;margin-top:12px;line-height:1.6}
+@media(max-width:450px){main{padding:22px}.rate{font-size:55px}h1{font-size:20px}}
+</style>
+</head>
+<body>
+<main>
+<h1>모험회 스트레스 보상 배율 시뮬레이터</h1>
+<p class="explain">슬라이더를 좌우로 움직이면 <b>기본 재화 획득 배율</b>이 즉시 바뀝니다. 대성공 추가 보상은 계산하지 않습니다.</p>
+<div class="panel" aria-live="polite">
+  <div class="eyebrow">현재 기본 재화 보상 배율</div>
+  <div id="rewardRate" class="rate">100%</div>
+  <div id="rewardAmount" class="sub">기본 재화 10개 기준 → 10개 획득</div>
+</div>
+<div class="titles"><label for="stress">스트레스 수치</label><span id="stressValue">100%</span></div>
+<input id="stress" type="range" min="0" max="100" step="1" value="100" aria-label="스트레스 수치" aria-valuetext="100퍼센트">
+<div class="ends"><span>0% · 최대 보상</span><span>100% · 기본 보상</span></div>
+<div class="charttitle">스트레스에 따른 기본 재화 획득 배율</div>
+<div class="chart">
+<svg viewBox="0 0 650 260" role="img" aria-label="스트레스 0퍼센트일 때 160퍼센트, 100퍼센트일 때 100퍼센트로 감소하는 선형 그래프">
+  <line x1="48" y1="18" x2="48" y2="216" stroke="#bac7db" />
+  <line x1="48" y1="216" x2="628" y2="216" stroke="#bac7db" />
+  <line x1="48" y1="25" x2="628" y2="25" stroke="#e4eaf3" stroke-dasharray="5 5" />
+  <line x1="48" y1="120" x2="628" y2="120" stroke="#e4eaf3" stroke-dasharray="5 5" />
+  <text x="40" y="29" text-anchor="end" fill="#637187" font-size="13">160%</text>
+  <text x="40" y="124" text-anchor="end" fill="#637187" font-size="13">130%</text>
+  <text x="40" y="220" text-anchor="end" fill="#637187" font-size="13">100%</text>
+  <text x="48" y="240" text-anchor="middle" fill="#637187" font-size="13">0%</text>
+  <text x="338" y="240" text-anchor="middle" fill="#637187" font-size="13">50%</text>
+  <text x="628" y="240" text-anchor="middle" fill="#637187" font-size="13">100%</text>
+  <line x1="48" y1="25" x2="628" y2="216" stroke="#457bd5" stroke-width="4" stroke-linecap="round" />
+  <line id="indicatorLine" x1="628" y1="216" x2="628" y2="216" stroke="#7d9ed4" stroke-dasharray="4 4" stroke-width="2" />
+  <circle id="indicator" cx="628" cy="216" r="8" fill="#245caf" stroke="white" stroke-width="3" />
+</svg>
+</div>
+<div class="legend"><span class="dot"></span>현재 스트레스 위치</div>
+<div class="formula"><b>계산식:</b> 기본 재화 배율(%) = 160 − (스트레스 수치 × 0.6)</div>
+<footer>표시한 재화 개수는 기본 보상을 10개로 놓은 예시값입니다. 소수점 반올림·절삭 규칙은 아직 적용하지 않았습니다. 이 파일은 인터넷 연결 없이 사용할 수 있습니다.</footer>
+</main>
+<script>
+const input=document.getElementById('stress');
+const rate=document.getElementById('rewardRate');
+const value=document.getElementById('stressValue');
+const amount=document.getElementById('rewardAmount');
+const dot=document.getElementById('indicator');
+const guide=document.getElementById('indicatorLine');
+const fmt=n=>Number(n.toFixed(1)).toLocaleString('ko-KR');
+function update(){
+  const s=Number(input.value);
+  const r=160-0.6*s;
+  value.textContent=`${s}%`;
+  rate.textContent=`${fmt(r)}%`;
+  amount.textContent=`기본 재화 10개 기준 → ${fmt(10*r/100)}개 획득`;
+  input.setAttribute('aria-valuetext',`${s}퍼센트`);
+  const x=48+580*s/100;
+  const y=25+191*s/100;
+  dot.setAttribute('cx',x);dot.setAttribute('cy',y);
+  guide.setAttribute('x1',x);guide.setAttribute('x2',x);
+  guide.setAttribute('y1',y);guide.setAttribute('y2',216);
+}
+input.addEventListener('input',update);update();
+</script>
+</body>
+</html>
